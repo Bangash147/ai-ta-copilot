@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Talent Acquisition Copilot — Illustrative Prototype · Arslan Khan</title>
+<style>
+:root{--bg:#060A16;--p:#0D1430;--p2:#111A3A;--line:rgba(150,165,255,.15);--line2:rgba(150,165,255,.28);--text:#E8ECFF;--muted:#A3ACD0;--dim:#7680A8;--blue:#5B8CFF;--violet:#A78BFA;--green:#4ADE9A;--amber:#F5C46B;--red:#FF8A8A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;background-image:radial-gradient(1000px 500px at 90% -10%,rgba(124,92,240,.16),transparent 60%)}
+button,input,select,textarea{font:inherit;color:inherit}
+header{border-bottom:1px solid var(--line);background:rgba(6,10,22,.85);backdrop-filter:blur(10px);position:sticky;top:0;z-index:10}
+header .in{max-width:1360px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#3D6BF0,#7C5CF0);display:grid;place-items:center;font-weight:800;font-size:13px}
+.title b{display:block;font-size:15px;letter-spacing:-.01em}.title span{font-size:12px;color:var(--muted)}
+.badge{font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;border:1px solid;white-space:nowrap}
+.b-amber{color:var(--amber);border-color:rgba(245,196,107,.4);background:rgba(245,196,107,.08)}
+.b-violet{color:#DCD0FF;border-color:rgba(167,139,250,.45);background:rgba(167,139,250,.1)}
+.b-green{color:#B5F2D3;border-color:rgba(74,222,154,.4);background:rgba(74,222,154,.08)}
+.b-blue{color:#C6D4FF;border-color:rgba(91,140,255,.4);background:rgba(91,140,255,.1)}
+.b-red{color:#FFC2C2;border-color:rgba(255,138,138,.4);background:rgba(255,138,138,.08)}
+.spacer{flex:1}
+.mode{display:flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.mode button{background:none;border:none;padding:7px 12px;cursor:pointer;color:var(--muted);font-size:12.5px}
+.mode button.on{background:linear-gradient(135deg,rgba(61,107,240,.5),rgba(124,92,240,.5));color:#fff}
+.notice{max-width:1360px;margin:12px auto 0;padding:0 20px}
+.notice div{font-size:12.5px;color:#D9CCFF;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3);border-radius:12px;padding:9px 14px}
+.wrap{max-width:1360px;margin:0 auto;padding:16px 20px 40px;display:grid;grid-template-columns:250px 1fr;gap:18px}
+aside .stp{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:12px;padding:9px 10px;cursor:pointer;color:var(--muted);margin-bottom:4px}
+aside .stp:hover{background:rgba(255,255,255,.04)}
+aside .stp.on{background:rgba(91,140,255,.1);border-color:var(--line2);color:var(--text)}
+aside .stp i{font-style:normal;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);flex:none}
+aside .stp.on i{background:linear-gradient(135deg,#3D6BF0,#7C5CF0);color:#fff}
+aside .stp .ok{margin-left:auto;color:var(--green);font-size:12px}
+aside .k{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:14px 10px 6px}
+.legend{font-size:11.5px;color:var(--muted);padding:10px;border:1px solid var(--line);border-radius:12px;margin-top:12px}
+.legend div{display:flex;gap:8px;align-items:center;margin:4px 0}
+.sw{width:10px;height:10px;border-radius:3px;flex:none}
+section.view{display:none}section.view.on{display:block}
+.card{background:linear-gradient(180deg,rgba(17,26,58,.9),rgba(12,18,42,.95));border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+.card.ai{border-color:rgba(167,139,250,.35)}
+.card.human{border-color:rgba(74,222,154,.35)}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.02em}
+h2{font-size:15px;margin:0 0 10px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h3{font-size:13px;margin:12px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+p.lead{color:var(--muted);margin:0 0 14px;max-width:900px}
+textarea,input[type=text],input[type=password],select{width:100%;background:#070C1E;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;color:var(--text);outline:none}
+textarea{min-height:220px;resize:vertical;font-size:12.5px;line-height:1.5}
+textarea:focus,input:focus,select:focus{border-color:var(--blue)}
+.btn{background:linear-gradient(135deg,#3D6BF0,#7C5CF0);border:none;border-radius:10px;padding:9px 14px;color:#fff;font-weight:600;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sec{background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--text);font-weight:500}
+.btn.ok{background:rgba(74,222,154,.16);border:1px solid rgba(74,222,154,.45);color:#B5F2D3}
+.btn.sm{padding:5px 10px;font-size:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:600;padding:7px 8px;border-bottom:1px solid var(--line2)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top;color:#D3D9F5}
+td[contenteditable]{outline:none}td[contenteditable]:focus{background:rgba(91,140,255,.08)}
+.code{font-family:"JetBrains Mono",Consolas,Menlo,monospace;font-size:12px;background:#070C1E;border:1px solid var(--line);border-radius:10px;padding:10px 12px;white-space:pre-wrap;word-break:break-word;color:#CFE0FF}
+.out-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chk{border:1px dashed rgba(74,222,154,.5);border-radius:12px;padding:12px 14px;background:rgba(74,222,154,.05);margin-top:12px}
+.chk b{color:#B5F2D3}
+.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:12px}
+.cands{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.cand{border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;background:rgba(255,255,255,.025)}
+.cand.on{border-color:var(--blue);background:rgba(91,140,255,.08)}
+.cand b{font-size:13px}.cand div{font-size:11.5px;color:var(--muted)}
+.ev-q{font-style:italic;color:#E8ECFF}
+.ev-none{color:var(--amber)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.seg button{background:none;border:none;padding:3px 8px;font-size:11.5px;color:var(--muted);cursor:pointer}
+.seg button.on.v{background:rgba(74,222,154,.18);color:#B5F2D3}.seg button.on.x{background:rgba(255,138,138,.18);color:#FFC2C2}
+.kan{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:8px;overflow-x:auto}
+.col{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:12px;padding:8px;min-height:180px}
+.col h4{margin:2px 4px 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.kc{background:#0B1230;border:1px solid var(--line2);border-radius:10px;padding:8px;margin-bottom:6px;font-size:12px}
+.kc select{margin-top:6px;padding:4px 6px;font-size:11.5px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.kpi .v{font-size:22px;font-weight:700}.kpi .k{font-size:11.5px;color:var(--muted)}.kpi .d{font-size:11px;color:var(--dim)}
+.bar{display:grid;grid-template-columns:140px 1fr 46px;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin:5px 0;position:relative}
+.bar .tr{height:14px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+.bar .fl{height:100%;background:var(--blue);border-radius:0 4px 4px 0}
+.bar .v{color:var(--text);font-weight:600;text-align:right}
+.bar:hover .tip{display:block}
+.tip{display:none;position:absolute;left:150px;top:-26px;background:#1A2350;border:1px solid var(--line2);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--text);white-space:nowrap;z-index:2}
+.log{font-family:"JetBrains Mono",Consolas,monospace;font-size:11.5px;max-height:360px;overflow:auto}
+.log div{padding:5px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.log .t{color:var(--dim)}.log .a{color:#DCD0FF}.log .h{color:#B5F2D3}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:s 0.8s linear infinite;display:inline-block}
+@keyframes s{to{transform:rotate(360deg)}}
+.err{color:var(--red);font-size:12.5px;margin-top:8px}
+.score{display:flex;gap:4px}.score button{width:28px;height:26px;border-radius:7px;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer;font-size:12px}
+.score button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.redact{background:rgba(245,196,107,.18);color:var(--amber);border-radius:4px;padding:0 3px}
+@media(max-width:980px){.wrap{grid-template-columns:1fr}aside{display:flex;overflow-x:auto;gap:6px}aside .k,aside .legend{display:none}aside .stp{flex:none;width:auto}.g2,.g3,.cands{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <div class="logo">TA</div>
+  <div class="title"><b>AI Talent Acquisition Copilot</b><span>Arslan Khan · aPHRi™ · CHRP® · built with Claude as coding partner</span></div>
+  <span class="badge b-violet">Illustrative Prototype</span>
+  <span class="badge b-amber">Synthetic data only</span>
+  <div class="spacer"></div>
+  <div class="mode" role="tablist" aria-label="Mode">
+    <button id="m-sample" class="on" onclick="setMode('sample')">Sample mode</button>
+    <button id="m-live" onclick="setMode('live')">Live mode (Claude API)</button>
+  </div>
+</div></header>
+<div class="notice"><div><b>Illustrative Prototype – Developed as a practical demonstration of AI-enabled recruitment capabilities.</b> Not connected to LinkedIn, GitHub, Hugging Face or any ATS. AI drafts; a person reviews and decides at every step. The AI never scores, ranks or rejects candidates.</div></div>
+
+<div class="wrap">
+<aside>
+  <div class="k">Workflow</div>
+  <button class="stp on" data-v="intake"><i>1</i>Hiring requirement<span class="ok" id="ok-intake"></span></button>
+  <button class="stp" data-v="analysis"><i>2</i>AI role analysis<span class="ok" id="ok-analysis"></span></button>
+  <button class="stp" data-v="sourcing"><i>3</i>Sourcing strategy<span class="ok" id="ok-sourcing"></span></button>
+  <button class="stp" data-v="screening"><i>4</i>Screening support<span class="ok" id="ok-screening"></span></button>
+  <button class="stp" data-v="interview"><i>5</i>Interview kit<span class="ok" id="ok-interview"></span></button>
+  <button class="stp" data-v="scorecard"><i>6</i>Human evaluation<span class="ok" id="ok-scorecard"></span></button>
+  <button class="stp" data-v="pipeline"><i>7</i>Pipeline tracker</button>
+  <button class="stp" data-v="dashboard"><i>8</i>Metrics dashboard</button>
+  <div class="k">Governance</div>
+  <button class="stp" data-v="audit"><i>✓</i>Audit log &amp; prompts</button>
+  <button class="stp" data-v="about"><i>?</i>About this prototype</button>
+  <div class="legend">
+    <div><span class="sw" style="background:var(--violet)"></span>AI-assisted draft</div>
+    <div><span class="sw" style="background:var(--green)"></span>Human review / decision</div>
+    <div><span class="sw" style="background:var(--amber)"></span>Synthetic / illustrative</div>
+  </div>
+</aside>
+
+<div>
+<!-- 1 INTAKE -->
+<section class="view on" id="v-intake">
+  <div class="card">
+    <h1>1 · Hiring requirement</h1>
+    <p class="lead">Paste a job description or intake notes. The sample below is a <b>fictional brief</b> written for this demo. In live mode, the text you enter is sent to Claude using your own API key.</p>
+    <div id="livebox" class="card" style="display:none;background:rgba(91,140,255,.06)">
+      <h2>Live mode settings <span class="badge b-blue">Your key stays in this browser tab</span></h2>
+      <div class="g2">
+        <div><label class="small muted">Anthropic API key</label><input type="password" id="apikey" placeholder="sk-ant-..." autocomplete="off"></div>
+        <div><label class="small muted">Model</label><input type="text" id="model" value="claude-sonnet-5-5"></div>
+      </div>
+      <p class="small dim" style="margin:8px 0 0">The key is held in memory only (not saved) and requests go directly from your browser to api.anthropic.com. Use a key with a spending limit. Only synthetic or consented, redacted data should be sent.</p>
+    </div>
+    <textarea id="jd"></textarea>
+    <div class="row" style="margin-top:12px"><button class="btn" onclick="runAnalysis()" id="b-analysis">Analyse role with AI →</button><button class="btn sec" onclick="copyPrompt('analysis')">Copy prompt for Claude / ChatGPT</button><span class="small dim">Input → AI-assisted processing → structured output → human review</span></div>
+  </div>
+</section>
+
+<!-- 2 ANALYSIS -->
+<section class="view" id="v-analysis">
+  <div class="card ai">
+    <div class="out-head"><h1 style="margin:0">2 · AI role analysis</h1><span class="badge b-violet" id="src-analysis">Not run yet</span></div>
+    <p class="lead">Competencies extracted from the brief, split into must-have and trainable, plus an ideal candidate profile. Cells are editable — the hiring manager corrects them before anything else happens.</p>
+    <div id="out-analysis"><p class="dim">Run step 1 first.</p></div>
+  </div>
+</section>
+
+<!-- 3 SOURCING -->
+<section class="view" id="v-sourcing">
+  <div class="card ai">
+    <div class="out-head"><h1 style="margin:0">3 · Sourcing strategy</h1><span class="badge b-violet" id="src-sourcing">Not run yet</span></div>
+    <p class="lead">Search strings and channel plan generated from the <b>approved</b> competencies. Run them yourself on each platform — this prototype does not search or scrape anything.</p>
+    <div class="row" style="margin-bottom:12px"><button class="btn" onclick="runSourcing()" id="b-sourcing">Generate sourcing strategy</button><button class="btn sec" onclick="copyPrompt('sourcing')">Copy prompt</button></div>
+    <div id="out-sourcing"></div>
+  </div>
+</section>
+
+<!-- 4 SCREENING -->
+<section class="view" id="v-screening">
+  <div class="card ai">
+    <div class="out-head"><h1 style="margin:0">4 · Screening support</h1><span class="badge b-amber">Synthetic candidates</span><span class="badge b-violet" id="src-screening">Not run yet</span></div>
+    <p class="lead">Select a synthetic candidate. The AI quotes CV evidence for each approved competency, or says “No evidence found”, and suggests questions. <b>It gives no score, rank or recommendation.</b> The recruiter verifies each line.</p>
+    <div class="cands" id="cands"></div>
+    <div class="g2">
+      <div><h3>CV text sent to the AI <label class="small" style="text-transform:none;letter-spacing:0;margin-left:8px"><input type="checkbox" id="redact" checked onchange="showCV()"> Redact personal data</label></h3><div class="code" id="cvtext" style="min-height:220px"></div>
+        <div class="row" style="margin-top:10px"><button class="btn" onclick="runScreening()" id="b-screening">Extract evidence</button><button class="btn sec" onclick="copyPrompt('screening')">Copy prompt</button></div></div>
+      <div><h3>Structured screening summary</h3><div id="out-screening"><p class="dim small">Select a candidate and run extraction.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 INTERVIEW -->
+<section class="view" id="v-interview">
+  <div class="card ai">
+    <div class="out-head"><h1 style="margin:0">5 · Interview kit</h1><span class="badge b-violet" id="src-interview">Not run yet</span></div>
+    <p class="lead">Competency-based questions, follow-up probes and anchors for what strong evidence looks like. Interviewers review and adapt them; technical depth is assessed by engineers.</p>
+    <div class="row" style="margin-bottom:12px"><button class="btn" onclick="runInterview()" id="b-interview">Generate interview kit</button><button class="btn sec" onclick="copyPrompt('interview')">Copy prompt</button></div>
+    <div id="out-interview"></div>
+  </div>
+</section>
+
+<!-- 6 SCORECARD -->
+<section class="view" id="v-scorecard">
+  <div class="card human">
+    <div class="out-head"><h1 style="margin:0">6 · Human evaluation scorecard</h1><span class="badge b-green">People decide — no AI in this step</span></div>
+    <p class="lead">Interviewers enter ratings (1–5) against the approved competencies. The weighted score informs the debrief; the decision and its job-related rationale are recorded by a person.</p>
+    <div class="row" style="margin-bottom:10px"><label class="small muted">Candidate</label><select id="sc-cand" style="width:auto" onchange="renderScorecard()"></select></div>
+    <div id="out-scorecard"></div>
+  </div>
+</section>
+
+<!-- 7 PIPELINE -->
+<section class="view" id="v-pipeline">
+  <div class="card">
+    <div class="out-head"><h1 style="margin:0">7 · Pipeline tracker</h1><span class="badge b-amber">Synthetic candidates</span></div>
+    <p class="lead">Move candidates between stages. Every move is logged and feeds the dashboard. Stage changes are human actions.</p>
+    <div class="kan" id="kan"></div>
+  </div>
+</section>
+
+<!-- 8 DASHBOARD -->
+<section class="view" id="v-dashboard">
+  <div class="card">
+    <div class="out-head"><h1 style="margin:0">8 · Recruitment metrics dashboard</h1><span class="badge b-amber">Illustrative synthetic dataset — not real results</span></div>
+    <p class="lead">Calculated live from a synthetic history of 60 candidates across 5 roles, plus the pipeline in step 7.</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="g3" id="charts"></div>
+    <div class="card ai" style="margin-top:14px">
+      <div class="out-head"><h2 style="margin:0">AI-drafted weekly hiring update</h2><span class="badge b-violet" id="src-report">Not run yet</span></div>
+      <div class="row" style="margin-bottom:10px"><button class="btn" onclick="runReport()" id="b-report">Draft update from these numbers</button><button class="btn sec" onclick="copyPrompt('report')">Copy prompt</button></div>
+      <div id="out-report"></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIT -->
+<section class="view" id="v-audit">
+  <div class="card">
+    <h1>Audit log &amp; prompt library</h1>
+    <p class="lead">Every AI call and every human approval, edit and decision is recorded with a timestamp — so the process can be explained to a candidate, a founder or an auditor.</p>
+    <div class="g2">
+      <div><h3>Audit log</h3><div class="log" id="log"></div><div class="row" style="margin-top:10px"><button class="btn sec sm" onclick="exportLog()">Export log (JSON)</button></div></div>
+      <div><h3>Prompt library</h3><select id="psel" onchange="showPrompt()"></select><div class="code" id="ptext" style="margin-top:8px;max-height:420px;overflow:auto"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="view" id="v-about">
+  <div class="card">
+    <h1>About this prototype</h1>
+    <div class="g3" style="margin-top:12px">
+      <div class="card"><h2><span class="badge b-green">Working prototype</span></h2><p class="small muted">This page. Runs in any browser with no install. Sample mode replays pre-generated outputs; live mode sends prompts to Claude through the Anthropic API with your own key. Synthetic data only.</p></div>
+      <div class="card"><h2><span class="badge b-blue">Prompt-based workflow</span></h2><p class="small muted">Every step has a “Copy prompt” button. The same prompts work in Claude or ChatGPT chat — the recruiter pastes inputs and reviews outputs. No integration needed.</p></div>
+      <div class="card"><h2><span class="badge b-amber">Production automation</span></h2><p class="small muted">Not built. A production version would integrate with the ATS (e.g., Ashby) through approved APIs, with access control, logging, retention rules, a privacy review and bias monitoring.</p></div>
+    </div>
+    <h3>Design principles</h3>
+    <ul class="small muted"><li>AI drafts; people approve, edit and decide — enforced by checkpoints in the flow.</li><li>The screening prompt forbids scores, rankings, and inferences about protected characteristics; it must quote evidence or say “No evidence found”.</li><li>Personal data (names, emails, phones, links) is redacted before any AI call.</li><li>No scraping and no platform integrations; sourcing strings are run by the recruiter on each platform under its terms.</li><li>All candidate profiles, the job brief and dashboard data are fictional.</li></ul>
+    <h3>Limitations</h3>
+    <ul class="small muted"><li>AI can misread or invent details — every evidence line must be verified against the CV.</li><li>Keyword evidence under-represents non-traditional candidates; the recruiter conversation remains essential.</li><li>Live mode depends on your API key, network and model availability.</li></ul>
+  </div>
+</section>
+</div>
+</div>
+
+<script>
+/* ===================== DATA (all synthetic) ===================== */
+const SAMPLE_JD = `Associate Machine Learning Engineer — Generative Imaging
+(Fictional brief written for this demo)
+
+About the team
+We build AI image and video tools used by creators and brands. Our ML team trains, fine-tunes and serves image-generation models.
+
+What you'll do
+- Fine-tune diffusion models (LoRA, DreamBooth-style) for new styles and product features
+- Improve inference speed and GPU cost for models in production
+- Design evaluations to compare model versions (quality, prompt adherence, safety)
+- Write clean, tested Python and ship to production with the platform team
+- Share results clearly with product managers and designers
+
+Must have
+- Strong PyTorch and deep learning fundamentals
+- Hands-on experience with generative image models (diffusion)
+- Evidence of shipping: production code, open-source work, or public models
+- Good software engineering practice (Git, testing, code review)
+
+Nice to have
+- Inference optimisation (fp16/int8, batching, TensorRT, ONNX)
+- Experience with model evaluation and experiment tracking
+
+Location: on-site, Islamabad. 0–2 years of experience; degree not required if you can show your work.`;
+
+const CANDS = [
+ {id:"C-101",name:"Ayesha Rauf",head:"ML Engineer · IT services CV team · 2 yrs",stage:"Recruiter screen",source:"LinkedIn outbound",
+  cv:`Ayesha Rauf — ayesha.rauf@example.com — +92 300 0000101 — github.com/ayesha-r-demo
+ML Engineer, (IT services company), 2023–present
+- Built object-detection models in PyTorch for retail shelf analytics; mAP improved from 0.61 to 0.72 on client test set
+- Converted models to ONNX and TensorRT; reduced p95 latency from 180 ms to 70 ms on T4 GPUs
+- Wrote unit tests and CI checks for the training pipeline; code reviews for 3 juniors
+Projects
+- Personal: experimented with Stable Diffusion img2img for product photos (notebook, not deployed)
+- Kaggle: bronze medal, image classification competition
+Education: BS Computer Science`},
+ {id:"C-102",name:"Bilal Khattak",head:"MS CS graduate · diffusion thesis",stage:"Work sample",source:"University lab",
+  cv:`Bilal Khattak — bilal.k@example.com — +92 300 0000102
+MS Computer Science, 2025. Thesis: conditional diffusion models for synthetic medical image generation
+- Implemented DDPM and latent diffusion from scratch in PyTorch; trained on 4×A100 university cluster
+- Evaluated with FID and expert ratings; workshop paper accepted (co-first author)
+- Released 2 LoRA adapters on Hugging Face (style transfer), ~1,200 downloads
+Research assistant, AI lab, 2023–2025: maintained lab GPU scheduling scripts (Python, Bash)
+No industry experience yet.`},
+ {id:"C-103",name:"Hira Siddiqui",head:"Backend engineer · ComfyUI hobbyist",stage:"Sourced",source:"Discord community",
+  cv:`Hira Siddiqui — hira.s@example.com — linkedin.com/in/hira-demo
+Backend Engineer (Python/Django), SaaS company, 2022–present
+- Built REST APIs and Celery job queues handling 2M requests/day
+- Owned migration from monolith to services; on-call rotation; wrote integration tests
+Side projects
+- Built ComfyUI workflows for consistent character generation; shared on Discord (popular in a 20k-member server)
+- Trained a LoRA on personal illustrations using kohya scripts
+Education: BS Software Engineering`},
+ {id:"C-104",name:"Usman Tariq",head:"ML Engineer · startup · 1.5 yrs",stage:"Panel interview",source:"GitHub / Hugging Face",
+  cv:`Usman Tariq — usman.t@example.com — +92 300 0000104 — github.com/usman-t-demo
+ML Engineer, early-stage photo-editing startup, 2024–present
+- Built an image-upscaling service in PyTorch serving ~40k requests/day
+- Cut GPU cost by moving to fp16 and dynamic batching
+- Maintain an open-source LoRA training repo (300 GitHub stars)
+- Work with the product designer on before/after quality reviews
+Education: BS Electrical Engineering`},
+ {id:"C-105",name:"Zainab Malik",head:"Data scientist · 4 yrs · tabular & experiments",stage:"Declined",source:"Inbound",
+  cv:`Zainab Malik — zainab.m@example.com — +92 300 0000105
+Data Scientist, fintech, 2021–present
+- Built credit-risk and demand-forecasting models (scikit-learn, XGBoost)
+- Designed A/B tests and an experiment-analysis framework used by 4 product teams
+- Presented results to leadership monthly
+Courses: fast.ai Practical Deep Learning (completed 2024)
+Education: MSc Statistics`},
+ {id:"C-106",name:"Daniyal Farooq",head:"Self-taught builder · launched AI avatar app",stage:"Recruiter screen",source:"Indie maker community",
+  cv:`Daniyal Farooq — daniyal.f@example.com — x.com/daniyal_demo
+Founder / developer, AI avatar app (side project), 2024–present
+- Built and launched an avatar-generation web app (Next.js + Python) using hosted diffusion APIs; ~5,000 users
+- Fine-tuned SDXL LoRAs per user; built a queue to batch jobs and reduce API cost
+Open source: 2 merged pull requests to the Hugging Face diffusers library (docs fix, scheduler bug fix)
+Bootcamp: full-stack web development, 2023. No university degree.`}
+];
+
+const STAGES=["Sourced","Recruiter screen","Work sample","Panel interview","Offer","Hired","Declined"];
+
+/* ===================== PROMPTS ===================== */
+const PROMPTS = {
+analysis:{name:"Role analysis — competencies & ideal profile",system:`You are a talent-acquisition assistant helping a recruiter prepare a hiring brief. You produce drafts for human review. Do not invent requirements that are not supported by the brief; if something is unclear, add it to "questions_for_hiring_manager". Use neutral, inclusive language. Never require degrees or school names unless the brief does. Output valid JSON only.`,
+ user:(jd)=>`Analyse this hiring brief.\n\n<brief>\n${jd}\n</brief>\n\nReturn JSON with this shape:\n{"role_title":"","summary":"one sentence","competencies":[{"name":"","type":"must-have|trainable","weight":0,"what_good_looks_like":"","evidence_signals":""}],"ideal_profile":{"summary":"","likely_backgrounds":[""],"not_required":[""]},"questions_for_hiring_manager":[""]}\nUse 5-7 competencies. Weights are percentages that sum to 100.`},
+sourcing:{name:"Sourcing strategy — Boolean, channels, outreach",system:`You help a recruiter plan ethical, proactive sourcing. Only suggest searches a person runs manually on public platforms under their terms. No scraping, no personal-data harvesting. Output valid JSON only.`,
+ user:(c)=>`Approved competencies and profile:\n${c}\n\nReturn JSON:\n{"search_strings":[{"platform":"","string":"","notes":""}],"channels":[{"channel":"","approach":"","profiles":""}],"outreach_template":"short, personalised first message with [placeholders] for the candidate's specific work"}\nInclude LinkedIn Boolean, GitHub search syntax, a Google X-ray string and a Hugging Face approach.`},
+screening:{name:"Screening support — evidence extraction (no scoring)",system:`You support a recruiter by organising evidence. You NEVER decide, score, rank, or recommend advancing or rejecting a candidate. For each competency, quote the exact words from the CV that are evidence, or write "No evidence found". Do not infer anything not written. Ignore and never mention name, gender, age, religion, ethnicity, nationality, photos, marital status, or the prestige of schools or employers. Output valid JSON only.`,
+ user:(comps,cv)=>`<competencies>\n${comps}\n</competencies>\n<cv redacted="true">\n${cv}\n</cv>\n\nReturn JSON:\n{"evidence":[{"competency":"","quotes":["exact quote"],"note":"what is unclear or needs verifying"}],"gaps_to_explore":[""],"questions_for_recruiter_call":["max 4, open-ended, job-related"]}`},
+interview:{name:"Interview kit — competency-based questions",system:`You draft structured interview kits for human interviewers. Questions must be job-related, open-ended, and the same for every candidate. Include behavioural and situational questions; leave deep technical validation to engineers. Output valid JSON only.`,
+ user:(c)=>`Competencies:\n${c}\n\nReturn JSON:\n{"kit":[{"competency":"","interviewer":"recruiter|engineer|hiring manager","questions":["",""],"follow_ups":[""],"strong_answer_signals":"","red_flags":""}]}`},
+report:{name:"Weekly hiring update — from dashboard numbers",system:`You draft a concise weekly hiring update for founders. Use only the numbers provided; never invent figures. Flag risks and the one or two decisions needed. Plain text, under 180 words.`,
+ user:(m)=>`Metrics (synthetic):\n${m}\n\nWrite the update with sections: Headline, Pipeline, Risks, Decisions needed.`}
+};
+
+/* ===================== SAMPLE OUTPUTS (pre-generated for demo) ===================== */
+const SAMPLE = {
+analysis:{role_title:"Associate Machine Learning Engineer — Generative Imaging",summary:"Early-career ML engineer who fine-tunes, evaluates and ships diffusion models to production.",
+ competencies:[
+  {name:"PyTorch & deep learning fundamentals",type:"must-have",weight:20,what_good_looks_like:"Has implemented and trained models in PyTorch and can explain architecture and training choices.",evidence_signals:"Training code, papers, repos, production models"},
+  {name:"Generative image models (diffusion, LoRA fine-tuning)",type:"must-have",weight:25,what_good_looks_like:"Has fine-tuned or trained diffusion models and understands trade-offs of LoRA vs full fine-tuning.",evidence_signals:"Hugging Face models, LoRA repos, thesis, shipped features"},
+  {name:"Model evaluation & experimentation",type:"must-have",weight:15,what_good_looks_like:"Designs fair comparisons (e.g., FID, human ratings, prompt adherence) and reports results honestly.",evidence_signals:"Evaluation write-ups, metrics in CV, experiment tracking"},
+  {name:"Software engineering practice",type:"must-have",weight:15,what_good_looks_like:"Writes clean, tested Python; uses Git and code review; has shipped to production or maintained OSS.",evidence_signals:"Tests, CI, merged PRs, production services"},
+  {name:"Inference optimisation & serving",type:"trainable",weight:10,what_good_looks_like:"Has reduced latency or GPU cost (fp16/int8, batching, TensorRT, ONNX).",evidence_signals:"Latency/cost improvements, serving infrastructure"},
+  {name:"Ownership & communication",type:"must-have",weight:15,what_good_looks_like:"Drives work to done and explains results to PMs and designers.",evidence_signals:"Side projects shipped, cross-functional work, clear write-ups"}],
+ ideal_profile:{summary:"A builder with 0–2 years of experience who has shipped or published generative image work and wants it to reach real users.",likely_backgrounds:["Junior ML engineers in computer-vision teams","MS graduates with diffusion research","Self-taught builders with public models or apps","Backend engineers who fine-tune models on the side"],not_required:["A university degree, if work is demonstrable","Prior experience at a large AI company","Research publications"]},
+ questions_for_hiring_manager:["Is production deployment experience required on day one, or can it be learned in the first 3 months?","Which evaluation methods does the team use today?","What is the compensation range for this level?"]},
+sourcing:{search_strings:[
+  {platform:"LinkedIn Recruiter",string:`("machine learning engineer" OR "ML engineer" OR "AI engineer") AND (PyTorch) AND (diffusion OR "stable diffusion" OR LoRA OR "image generation") NOT (senior OR lead OR manager)`,notes:"Location: Islamabad, Rawalpindi, Lahore; also remote-to-relocate."},
+  {platform:"GitHub (user search)",string:`location:Pakistan language:Python followers:>10 diffusion`,notes:"Then open repos: look for training scripts, READMEs with results, recent commits."},
+  {platform:"Google X-ray",string:`site:huggingface.co ("LoRA" OR "SDXL" OR "fine-tuned") ("Pakistan" OR "Islamabad" OR "Lahore")`,notes:"Public model pages only; check linked GitHub or X for contact routes."},
+  {platform:"Hugging Face",string:`Models → task: text-to-image → sort: recently updated → open author profiles`,notes:"Read model cards: evaluation, training details, sample grids."}],
+ channels:[
+  {channel:"Hugging Face & Civitai authors",approach:"Comment on the model's trade-offs; invite to a chat with an ML engineer",profiles:"Hands-on fine-tuners"},
+  {channel:"University AI labs",approach:"Ask faculty about MS theses on generative models; offer a research talk",profiles:"Research graduates"},
+  {channel:"Kaggle",approach:"Computer-vision competition top tiers; mention a specific notebook",profiles:"Strong fundamentals, early career"},
+  {channel:"AI Discord servers",approach:"Contribute first; recruit only where rules allow",profiles:"ComfyUI and LoRA builders"},
+  {channel:"Indie makers / X",approach:"Look for launched AI image apps with real users",profiles:"Self-taught product builders"}],
+ outreach_template:`Hi [first name] — I came across [specific work: model / repo / app] and liked [one concrete detail]. I'm hiring an ML engineer to fine-tune and ship image models to real users in Islamabad. Would you be open to a 20-minute chat with one of our ML engineers about what they're working on? No CV needed — and if the timing isn't right, I'd still like to stay in touch.`},
+screening:{
+ "C-101":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:["Built object-detection models in PyTorch for retail shelf analytics"],note:"Verify personal contribution vs team."},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:["experimented with Stable Diffusion img2img for product photos (notebook, not deployed)"],note:"Exploratory only; no fine-tuning evidence."},
+  {competency:"Model evaluation & experimentation",quotes:["mAP improved from 0.61 to 0.72 on client test set"],note:"Ask how the test set was built."},
+  {competency:"Software engineering practice",quotes:["Wrote unit tests and CI checks for the training pipeline","code reviews for 3 juniors"],note:""},
+  {competency:"Inference optimisation & serving",quotes:["Converted models to ONNX and TensorRT; reduced p95 latency from 180 ms to 70 ms"],note:""},
+  {competency:"Ownership & communication",quotes:["code reviews for 3 juniors"],note:"Limited direct evidence of cross-functional communication."}],
+  gaps_to_explore:["Depth of hands-on diffusion experience","Interest in moving from detection to generation"],
+  questions_for_recruiter_call:["Walk me through the latency work — what did you try first, and what did you personally change?","What did you learn from the Stable Diffusion experiments, and what would you build next?","How did you decide the mAP improvement was real and not noise?"]},
+ "C-102":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:["Implemented DDPM and latent diffusion from scratch in PyTorch"],note:""},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:["Thesis: conditional diffusion models for synthetic medical image generation","Released 2 LoRA adapters on Hugging Face (style transfer), ~1,200 downloads"],note:""},
+  {competency:"Model evaluation & experimentation",quotes:["Evaluated with FID and expert ratings; workshop paper accepted (co-first author)"],note:"Clarify own role in the paper."},
+  {competency:"Software engineering practice",quotes:["maintained lab GPU scheduling scripts (Python, Bash)"],note:"No evidence of testing or production code."},
+  {competency:"Inference optimisation & serving",quotes:[],note:"No evidence found"},
+  {competency:"Ownership & communication",quotes:["workshop paper accepted (co-first author)"],note:"Ask about explaining work to non-researchers."}],
+  gaps_to_explore:["Production engineering practices","Expectations moving from research to product"],
+  questions_for_recruiter_call:["Which parts of the latent diffusion implementation did you write yourself?","How would you explain FID's limitations to a product manager?","What would excite or worry you about shipping models to millions of users?"]},
+ "C-103":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:[],note:"No evidence found"},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:["Built ComfyUI workflows for consistent character generation","Trained a LoRA on personal illustrations using kohya scripts"],note:"Tool-level use; check understanding of training choices."},
+  {competency:"Model evaluation & experimentation",quotes:[],note:"No evidence found"},
+  {competency:"Software engineering practice",quotes:["Built REST APIs and Celery job queues handling 2M requests/day","wrote integration tests"],note:""},
+  {competency:"Inference optimisation & serving",quotes:["Celery job queues handling 2M requests/day"],note:"Queueing experience is relevant to GPU job orchestration; not model-level optimisation."},
+  {competency:"Ownership & communication",quotes:["Owned migration from monolith to services; on-call rotation","shared on Discord (popular in a 20k-member server)"],note:""}],
+  gaps_to_explore:["Deep learning fundamentals","Whether a backend or ML-platform role is a better fit"],
+  questions_for_recruiter_call:["What did you change in the LoRA training settings, and why?","What part of ML work do you want to own — the model or the system around it?","Tell me about the migration you owned: what went wrong?"]},
+ "C-104":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:["Built an image-upscaling service in PyTorch serving ~40k requests/day"],note:""},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:["Maintain an open-source LoRA training repo (300 GitHub stars)"],note:"Review the repo before the call."},
+  {competency:"Model evaluation & experimentation",quotes:["before/after quality reviews"],note:"Unclear whether quantitative evaluation is used."},
+  {competency:"Software engineering practice",quotes:["Maintain an open-source LoRA training repo"],note:"Check tests and code review in the repo."},
+  {competency:"Inference optimisation & serving",quotes:["Cut GPU cost by moving to fp16 and dynamic batching"],note:""},
+  {competency:"Ownership & communication",quotes:["Work with the product designer on before/after quality reviews"],note:""}],
+  gaps_to_explore:["Evaluation methodology","Scope of personal ownership in the startup"],
+  questions_for_recruiter_call:["How did you measure upscaling quality?","What was your part versus the team's on the 40k requests/day service?","Walk me through one LoRA training run end to end."]},
+ "C-105":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:["fast.ai Practical Deep Learning (completed 2024)"],note:"Course only; no project evidence."},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:[],note:"No evidence found"},
+  {competency:"Model evaluation & experimentation",quotes:["Designed A/B tests and an experiment-analysis framework used by 4 product teams"],note:"Strong, but in tabular / product context."},
+  {competency:"Software engineering practice",quotes:[],note:"No evidence found"},
+  {competency:"Inference optimisation & serving",quotes:[],note:"No evidence found"},
+  {competency:"Ownership & communication",quotes:["Presented results to leadership monthly"],note:""}],
+  gaps_to_explore:["Hands-on deep learning and generative models","Interest in an evaluation-focused role"],
+  questions_for_recruiter_call:["What have you built with deep learning since the course?","Would a model-evaluation or data role interest you more than this one?"]},
+ "C-106":{evidence:[
+  {competency:"PyTorch & deep learning fundamentals",quotes:["scheduler bug fix"],note:"Indirect; verify depth in a technical conversation."},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",quotes:["Fine-tuned SDXL LoRAs per user","2 merged pull requests to the Hugging Face diffusers library"],note:""},
+  {competency:"Model evaluation & experimentation",quotes:[],note:"No evidence found"},
+  {competency:"Software engineering practice",quotes:["2 merged pull requests to the Hugging Face diffusers library","Built and launched an avatar-generation web app (Next.js + Python)"],note:""},
+  {competency:"Inference optimisation & serving",quotes:["built a queue to batch jobs and reduce API cost"],note:"Uses hosted APIs; not self-hosted serving."},
+  {competency:"Ownership & communication",quotes:["Built and launched an avatar-generation web app (Next.js + Python) using hosted diffusion APIs; ~5,000 users"],note:"Strong ownership signal."}],
+  gaps_to_explore:["Evaluation practice","Comfort training models without hosted APIs"],
+  questions_for_recruiter_call:["What did the scheduler bug fix involve, and how did you find it?","How did you decide a user's LoRA was good enough to ship?","What would you need to learn to train models on our own GPUs?"]}
+},
+interview:{kit:[
+  {competency:"PyTorch & deep learning fundamentals",interviewer:"engineer",questions:["Walk us through a model you trained: architecture, loss, and one decision you'd change.","How would you debug a training run whose loss suddenly diverges?"],follow_ups:["What did you check first?","How did you know the fix worked?"],strong_answer_signals:"Specific, first-hand detail; reasons from first principles.",red_flags:"Only tool names; cannot explain own choices."},
+  {competency:"Generative image models (diffusion, LoRA fine-tuning)",interviewer:"engineer",questions:["When would you choose LoRA over full fine-tuning?","Tell us about a fine-tune that didn't work. What did you change?"],follow_ups:["What data did you use and why?"],strong_answer_signals:"Understands trade-offs in data, rank, steps and overfitting.",red_flags:"Copied settings without understanding."},
+  {competency:"Model evaluation & experimentation",interviewer:"engineer",questions:["How would you decide whether model v2 is better than v1 for our users?"],follow_ups:["What could make your metric misleading?"],strong_answer_signals:"Combines automatic metrics with human evaluation; aware of bias.",red_flags:"Relies on one metric or cherry-picked samples."},
+  {competency:"Software engineering practice",interviewer:"engineer",questions:["Show us a piece of code you're proud of. How is it tested?"],follow_ups:["How do you handle code review feedback you disagree with?"],strong_answer_signals:"Readable code, tests, version control habits.",red_flags:"No testing; dismissive of review."},
+  {competency:"Inference optimisation & serving",interviewer:"hiring manager",questions:["Our generation endpoint is too slow at peak. Where would you start?"],follow_ups:["What would you measure?"],strong_answer_signals:"Measures before optimising; knows common levers.",red_flags:"Jumps to rewrites without data."},
+  {competency:"Ownership & communication",interviewer:"recruiter",questions:["Tell me about something you shipped that nobody asked you to build.","Describe a time you explained a technical result to a non-technical colleague."],follow_ups:["What happened next?","What would you do differently?"],strong_answer_signals:"Clear ownership, honest about failures, audience-aware.",red_flags:"Vague 'we' answers; blames others."}]}
+};
+
+/* ===================== STATE ===================== */
+let MODE="sample", S={analysis:null,sourcing:null,screening:{},interview:null,report:null,approved:{},verify:{},scores:{},decisions:{}}, CUR="C-101", LOG=[];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function log(kind,msg){LOG.unshift({time:new Date().toISOString(),kind,msg});renderLog();}
+function setMode(m){MODE=m;$("m-sample").classList.toggle("on",m==="sample");$("m-live").classList.toggle("on",m==="live");$("livebox").style.display=m==="live"?"block":"none";log("system","Mode set to "+(m==="live"?"LIVE (Claude API, user key)":"SAMPLE (pre-generated outputs)"));if(m==="live")go("intake");}
+function go(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));document.querySelectorAll("aside .stp").forEach(b=>b.classList.toggle("on",b.dataset.v===v));if(v==="dashboard")renderDash();if(v==="pipeline")renderKan();if(v==="scorecard")renderScorecard();if(v==="audit"){renderLog();showPrompt();}window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll("aside .stp").forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+/* redaction */
+function redact(text,c){let t=text;const parts=c.name.split(" ");t=t.replace(new RegExp(c.name,"g"),"[CANDIDATE]");parts.forEach(p=>{if(p.length>2)t=t.replace(new RegExp("\\b"+p+"\\b","g"),"[NAME]")});
+ t=t.replace(/[\w.+-]+@[\w-]+\.[\w.]+/g,"[EMAIL]").replace(/\+?\d[\d\s-]{8,}\d/g,"[PHONE]").replace(/\b(?:https?:\/\/)?(?:www\.)?(?:github\.com|linkedin\.com|x\.com)\/[\w\-/]+/g,"[LINK]");return t;}
+function cvFor(c){return $("redact").checked?redact(c.cv,c):c.cv;}
+
+/* AI call */
+async function callAI(key,userText){
+ const P=PROMPTS[key];
+ if(MODE==="sample"){await new Promise(r=>setTimeout(r,650));return null;}
+ const apiKey=$("apikey").value.trim();if(!apiKey)throw new Error("Live mode needs an Anthropic API key (step 1). Or switch to Sample mode.");
+ const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+  body:JSON.stringify({model:$("model").value.trim()||"claude-sonnet-5-5",max_tokens:2500,system:P.system,messages:[{role:"user",content:userText}]})});
+ if(!res.ok){const t=await res.text();throw new Error("API error "+res.status+": "+t.slice(0,240));}
+ const j=await res.json();const txt=(j.content||[]).map(x=>x.text||"").join("");
+ if(key==="report")return txt;
+ const m=txt.match(/\{[\s\S]*\}/);if(!m)throw new Error("Model did not return JSON. Raw output: "+txt.slice(0,200));
+ return JSON.parse(m[0]);
+}
+async function withBusy(btn,fn){const b=$(btn),old=b.innerHTML;b.disabled=true;b.innerHTML='<span class="spin"></span> Working…';try{await fn();}catch(e){const d=document.createElement("div");d.className="err";d.textContent=e.message;b.parentNode.appendChild(d);setTimeout(()=>d.remove(),9000);log("error",e.message);}finally{b.disabled=false;b.innerHTML=old;}}
+function srcBadge(id){$(id).textContent=MODE==="sample"?"Pre-generated sample output":"Live Claude output";$(id).className="badge "+(MODE==="sample"?"b-amber":"b-violet");}
+function compsText(){const a=S.analysis;return a?a.competencies.map(c=>`- ${c.name} (${c.type}, ${c.weight}%): ${c.what_good_looks_like}`).join("\n"):"(run role analysis first)";}
+function promptText(key){const P=PROMPTS[key];let u;if(key==="analysis")u=P.user($("jd").value);else if(key==="screening")u=P.user(compsText(),cvFor(CANDS.find(c=>c.id===CUR)));else if(key==="report")u=P.user(metricsText());else u=P.user(compsText()+(S.analysis?"\nProfile: "+S.analysis.ideal_profile.summary:""));return "SYSTEM:\n"+P.system+"\n\nUSER:\n"+u;}
+function copyPrompt(k){navigator.clipboard?.writeText(promptText(k)).then(()=>log("human","Copied prompt '"+PROMPTS[k].name+"' for use in a chat assistant"),()=>{});const b=event.target;const o=b.textContent;b.textContent="Copied ✓";setTimeout(()=>b.textContent=o,1400);}
+function checkpoint(step,label){return `<div class="chk"><b>Human checkpoint —</b> <span class="small muted">${label}</span><div class="row" style="margin-top:8px"><input type="text" id="who-${step}" placeholder="Reviewer name / role (e.g., Hiring manager)" style="max-width:300px"><button class="btn ok sm" onclick="approve('${step}')">Approve${step==="analysis"?" (with edits)":""}</button><span class="small" id="appr-${step}">${S.approved[step]?"✓ Approved by "+esc(S.approved[step]):""}</span></div></div>`;}
+function approve(step){const who=($("who-"+step).value||"Reviewer").trim();if(step==="analysis")readAnalysisEdits();S.approved[step]=who;$("appr-"+step).textContent="✓ Approved by "+who;$("ok-"+step).textContent="✓";log("human",`${step} output approved by ${who}`);}
+
+/* STEP 2 */
+async function runAnalysis(){await withBusy("b-analysis",async()=>{const r=await callAI("analysis",PROMPTS.analysis.user($("jd").value));S.analysis=r||JSON.parse(JSON.stringify(SAMPLE.analysis));log("ai",`Role analysis generated (${MODE})`);$("ok-intake").textContent="✓";srcBadge("src-analysis");renderAnalysis();go("analysis");});}
+function renderAnalysis(){const a=S.analysis;if(!a)return;let h=`<h2>${esc(a.role_title)}</h2><p class="small muted" style="margin-top:-6px">${esc(a.summary)}</p><h3>Competencies (editable)</h3><table id="comp-t"><thead><tr><th>Competency</th><th>Type</th><th>Weight %</th><th>What good looks like</th><th>Evidence signals</th></tr></thead><tbody>`;
+ a.competencies.forEach((c,i)=>{h+=`<tr data-i="${i}"><td contenteditable>${esc(c.name)}</td><td contenteditable><span class="badge ${c.type==="must-have"?"b-blue":"b-green"}">${esc(c.type)}</span></td><td contenteditable>${esc(c.weight)}</td><td contenteditable>${esc(c.what_good_looks_like)}</td><td contenteditable>${esc(c.evidence_signals)}</td></tr>`});
+ h+=`</tbody></table><div class="g2" style="margin-top:12px"><div><h3>Ideal candidate profile</h3><p class="small">${esc(a.ideal_profile.summary)}</p><p class="small muted"><b>Likely backgrounds:</b> ${a.ideal_profile.likely_backgrounds.map(esc).join(" · ")}</p><p class="small muted"><b>Not required:</b> ${a.ideal_profile.not_required.map(esc).join(" · ")}</p></div><div><h3>Questions for the hiring manager</h3><ul class="small muted">${a.questions_for_hiring_manager.map(q=>"<li>"+esc(q)+"</li>").join("")}</ul></div></div>`;
+ h+=checkpoint("analysis","the hiring manager confirms competencies, types and weights before sourcing starts.");$("out-analysis").innerHTML=h;}
+function readAnalysisEdits(){document.querySelectorAll("#comp-t tbody tr").forEach(tr=>{const c=S.analysis.competencies[+tr.dataset.i],td=tr.querySelectorAll("td");c.name=td[0].innerText.trim();c.type=td[1].innerText.trim();c.weight=parseFloat(td[2].innerText)||0;c.what_good_looks_like=td[3].innerText.trim();c.evidence_signals=td[4].innerText.trim();});}
+function need(step,msg){if(!S.approved[step]){alert(msg);go(step);return false;}return true;}
+
+/* STEP 3 */
+async function runSourcing(){if(!need("analysis","Approve the role analysis first (human checkpoint 1)."))return;await withBusy("b-sourcing",async()=>{const r=await callAI("sourcing",PROMPTS.sourcing.user(compsText()));S.sourcing=r||SAMPLE.sourcing;log("ai",`Sourcing strategy generated (${MODE})`);srcBadge("src-sourcing");renderSourcing();});}
+function renderSourcing(){const s=S.sourcing;let h=`<h3>Search strings</h3>`;s.search_strings.forEach(x=>{h+=`<div style="margin-bottom:10px"><div class="row" style="justify-content:space-between"><b class="small">${esc(x.platform)}</b><button class="btn sec sm" onclick="navigator.clipboard?.writeText(this.parentNode.nextElementSibling.innerText);log('human','Copied a search string')">Copy</button></div><div class="code">${esc(x.string)}</div><div class="small dim">${esc(x.notes)}</div></div>`});
+ h+=`<h3>Channel plan</h3><table><thead><tr><th>Channel</th><th>Approach</th><th>Profiles</th></tr></thead><tbody>${s.channels.map(c=>`<tr><td>${esc(c.channel)}</td><td>${esc(c.approach)}</td><td>${esc(c.profiles)}</td></tr>`).join("")}</tbody></table><h3>Outreach template (edit before use)</h3><textarea style="min-height:110px">${esc(s.outreach_template)}</textarea>`;
+ h+=checkpoint("sourcing","the recruiter personalises every message; nothing is sent automatically.");$("out-sourcing").innerHTML=h;}
+
+/* STEP 4 */
+function renderCands(){$("cands").innerHTML=CANDS.map(c=>`<div class="cand ${c.id===CUR?"on":""}" onclick="pick('${c.id}')"><b>${c.id} · ${esc(c.name)}</b><div>${esc(c.head)}</div><div class="dim">Synthetic profile · source: ${esc(c.source)}</div></div>`).join("");}
+function pick(id){CUR=id;renderCands();showCV();renderScreening();}
+function showCV(){const c=CANDS.find(x=>x.id===CUR);let t=esc(cvFor(c));t=t.replace(/\[(CANDIDATE|NAME|EMAIL|PHONE|LINK)\]/g,'<span class="redact">[$1]</span>');$("cvtext").innerHTML=t;}
+async function runScreening(){if(!need("analysis","Approve the role analysis first (human checkpoint 1)."))return;await withBusy("b-screening",async()=>{const c=CANDS.find(x=>x.id===CUR);const r=await callAI("screening",PROMPTS.screening.user(compsText(),cvFor(c)));S.screening[CUR]=r||SAMPLE.screening[CUR];log("ai",`Screening evidence extracted for ${CUR} (${MODE}; redaction ${$("redact").checked?"ON":"OFF"})`);srcBadge("src-screening");renderScreening();});}
+function renderScreening(){const r=S.screening[CUR];if(!r){$("out-screening").innerHTML='<p class="dim small">Not run for this candidate yet.</p>';return;}
+ S.verify[CUR]=S.verify[CUR]||{};let h=`<table><thead><tr><th>Competency</th><th>CV evidence (quoted)</th><th>Recruiter check</th></tr></thead><tbody>`;
+ r.evidence.forEach((e,i)=>{const q=(e.quotes||[]).filter(Boolean);const v=S.verify[CUR][i];h+=`<tr><td>${esc(e.competency)}</td><td>${q.length?q.map(x=>`<div class="ev-q">“${esc(x)}”</div>`).join(""):'<span class="ev-none">No evidence found</span>'}${e.note&&e.note!=="No evidence found"?`<div class="small dim">${esc(e.note)}</div>`:""}</td><td><div class="seg"><button class="v ${v==="ok"?"on":""}" onclick="ver(${i},'ok')">Verified</button><button class="x ${v==="bad"?"on":""}" onclick="ver(${i},'bad')">Incorrect</button></div></td></tr>`});
+ h+=`</tbody></table><h3>Gaps to explore</h3><ul class="small muted">${(r.gaps_to_explore||[]).map(x=>"<li>"+esc(x)+"</li>").join("")}</ul><h3>Questions for the recruiter call</h3><ol class="small muted">${(r.questions_for_recruiter_call||[]).map(x=>"<li>"+esc(x)+"</li>").join("")}</ol>`;
+ const done=Object.keys(S.verify[CUR]).length===r.evidence.length;h+=`<div class="chk"><b>Human checkpoint —</b> <span class="small muted">verify every line against the CV. Next step is decided by the recruiter: <b>${done?"all lines checked ✓":"verification in progress"}</b></span></div>`;$("out-screening").innerHTML=h;}
+function ver(i,v){S.verify[CUR][i]=v;log("human",`${CUR} evidence line ${i+1} marked ${v==="ok"?"VERIFIED":"INCORRECT"} by recruiter`);renderScreening();if(Object.keys(S.screening).length)$("ok-screening").textContent="✓";}
+
+/* STEP 5 */
+async function runInterview(){if(!need("analysis","Approve the role analysis first (human checkpoint 1)."))return;await withBusy("b-interview",async()=>{const r=await callAI("interview",PROMPTS.interview.user(compsText()));S.interview=r||SAMPLE.interview;log("ai",`Interview kit generated (${MODE})`);srcBadge("src-interview");renderInterview();});}
+function renderInterview(){const k=S.interview.kit;let h=`<div class="g2">`;k.forEach(x=>{h+=`<div class="card" style="margin:0"><h2>${esc(x.competency)} <span class="badge b-blue">${esc(x.interviewer)}</span></h2><ol class="small" style="margin:0 0 6px;padding-left:18px">${x.questions.map(q=>"<li>"+esc(q)+"</li>").join("")}</ol><div class="small muted"><b>Follow-ups:</b> ${x.follow_ups.map(esc).join(" · ")}</div><div class="small" style="color:#B5F2D3;margin-top:4px"><b>Strong:</b> ${esc(x.strong_answer_signals)}</div><div class="small" style="color:#FFC2C2"><b>Red flags:</b> ${esc(x.red_flags)}</div></div>`});h+=`</div>`+checkpoint("interview","interviewers review and adapt questions; the same core questions are used for every candidate.");$("out-interview").innerHTML=h;}
+
+/* STEP 6 */
+function renderScorecard(){const sel=$("sc-cand");if(!sel.options.length)sel.innerHTML=CANDS.map(c=>`<option value="${c.id}">${c.id} · ${esc(c.name)}</option>`).join("");const id=sel.value;
+ const comps=(S.analysis||SAMPLE.analysis).competencies;S.scores[id]=S.scores[id]||{};const sc=S.scores[id];
+ let tot=0,wsum=0;comps.forEach((c,i)=>{if(sc[i]){tot+=sc[i]*c.weight;wsum+=c.weight}});const ws=wsum?(tot/wsum).toFixed(2):"—";
+ let h=`<table><thead><tr><th>Competency</th><th>Weight</th><th>Rating (1–5)</th></tr></thead><tbody>`;comps.forEach((c,i)=>{h+=`<tr><td>${esc(c.name)}</td><td>${c.weight}%</td><td><div class="score">${[1,2,3,4,5].map(n=>`<button class="${sc[i]===n?"on":""}" onclick="setScore('${id}',${i},${n})">${n}</button>`).join("")}</div></td></tr>`});
+ const d=S.decisions[id];h+=`</tbody></table><div class="row" style="margin-top:12px"><div class="badge b-blue" style="font-size:13px">Weighted score: ${ws} / 5 · ${Object.keys(sc).length}/${comps.length} rated</div></div>
+ <div class="chk"><b>Human decision —</b> <span class="small muted">recorded by the hiring team with a job-related rationale.</span>
+ <div class="g2" style="margin-top:8px"><select id="dec"><option value="">Select decision…</option><option ${d?.dec==="Advance"?"selected":""}>Advance</option><option ${d?.dec==="Hold"?"selected":""}>Hold</option><option ${d?.dec==="Decline"?"selected":""}>Decline</option></select><input type="text" id="dec-by" placeholder="Decided by (name / role)" value="${esc(d?.by||"")}"></div>
+ <textarea id="dec-why" style="min-height:70px;margin-top:8px" placeholder="Job-related rationale, referencing scorecard evidence">${esc(d?.why||"")}</textarea>
+ <div class="row" style="margin-top:8px"><button class="btn ok sm" onclick="decide('${id}')">Record decision</button><span class="small" id="dec-msg">${d?`✓ ${esc(d.dec)} — recorded by ${esc(d.by)}`:""}</span></div></div>`;$("out-scorecard").innerHTML=h;}
+function setScore(id,i,n){S.scores[id][i]=n;log("human",`${id} rated ${n}/5 on competency ${i+1}`);renderScorecard();}
+function decide(id){const dec=$("dec").value,by=$("dec-by").value.trim(),why=$("dec-why").value.trim();if(!dec||!by||why.length<15){$("dec-msg").textContent="A decision, a decision-maker and a rationale (15+ characters) are required.";return;}S.decisions[id]={dec,by,why};log("human",`DECISION ${id}: ${dec} by ${by} — "${why}"`);$("ok-scorecard").textContent="✓";const c=CANDS.find(x=>x.id===id);if(dec==="Decline")c.stage="Declined";if(dec==="Advance"&&STAGES.indexOf(c.stage)<5)c.stage=STAGES[Math.min(STAGES.indexOf(c.stage)+1,4)];renderScorecard();}
+
+/* STEP 7 */
+function renderKan(){$("kan").innerHTML=STAGES.map(st=>{const cs=CANDS.filter(c=>c.stage===st);return `<div class="col"><h4>${st}<span>${cs.length}</span></h4>${cs.map(c=>`<div class="kc"><b>${c.id}</b> ${esc(c.name.split(" ")[0])}<div class="dim" style="font-size:11px">${esc(c.source)}</div><select onchange="move('${c.id}',this.value)">${STAGES.map(s=>`<option ${s===st?"selected":""}>${s}</option>`).join("")}</select></div>`).join("")}</div>`}).join("");}
+function move(id,st){const c=CANDS.find(x=>x.id===id);log("human",`${id} moved ${c.stage} → ${st}`);c.stage=st;renderKan();}
+
+/* STEP 8 — synthetic history, seeded */
+function rng(seed){return()=>{seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296;}}
+const HIST=(()=>{const r=rng(42),roles=["ML Engineer","Backend Engineer","Frontend Engineer","Product Designer","Growth Marketer"],src=["LinkedIn outbound","GitHub / Hugging Face","Referral","Talent community","Inbound"];const out=[];
+ for(let i=0;i<60;i++){const s=src[Math.floor(r()*5)];let reach=1;const p=[.62,.55,.6,.45,.8,.0];// prob to pass each stage
+  const boost=s==="Referral"||s==="GitHub / Hugging Face"?.12:s==="Inbound"?-.15:0;while(reach<6&&r()<p[reach-1]+boost)reach++;
+  const withdrew=reach<6&&r()<.3;out.push({role:roles[i%5],source:s,reach,withdrew,days:Math.round(14+r()*30)});}return out;})();
+function metrics(){const all=HIST.concat(CANDS.filter(c=>c.stage!=="Declined"||true).map(c=>({role:"ML Engineer (live)",source:c.source,reach:c.stage==="Declined"?2:STAGES.indexOf(c.stage)+1,withdrew:false,days:null,live:true})));
+ const st=["Sourced","Screen","Work sample","Panel","Offer","Hired"];const cnt=st.map((_,i)=>all.filter(x=>x.reach>=i+1).length);
+ const hired=all.filter(x=>x.reach>=6),offers=cnt[4];const tth=hired.filter(x=>x.days).map(x=>x.days).sort((a,b)=>a-b);const med=tth.length?tth[Math.floor(tth.length/2)]:0;
+ const srcs={};hired.forEach(h=>srcs[h.source]=(srcs[h.source]||0)+1);
+ const drop=st.slice(0,5).map((s,i)=>{const at=all.filter(x=>x.reach===i+1&&x.withdrew).length;return [s,cnt[i]?Math.round(at/cnt[i]*100):0]});
+ return {all,st,cnt,hired:hired.length,offers,oar:offers?Math.round(hired.length/offers*100):0,med,srcs,drop,s2i:cnt[1]?Math.round(cnt[3]/cnt[1]*100):0};}
+function metricsText(){const m=metrics();return `Candidates in funnel: ${m.cnt.map((c,i)=>m.st[i]+" "+c).join(", ")}\nOffers: ${m.offers}; hires: ${m.hired}; offer acceptance: ${m.oar}%\nMedian time to hire: ${m.med} days\nScreen-to-panel conversion: ${m.s2i}%\nSource of hire: ${Object.entries(m.srcs).map(([k,v])=>k+" "+v).join(", ")}\nWithdrawal rate by stage: ${m.drop.map(d=>d[0]+" "+d[1]+"%").join(", ")}`;}
+function bars(title,rows,fmt,note){const max=Math.max(...rows.map(r=>r[1]),1);return `<div class="card" style="margin:0"><h2>${title}</h2>${rows.map(r=>`<div class="bar"><span>${esc(r[0])}</span><div class="tr"><div class="fl" style="width:${r[1]/max*100}%"></div></div><span class="v">${fmt(r[1])}</span><span class="tip">${esc(r[0])}: ${fmt(r[1])}</span></div>`).join("")}${note?`<p class="small dim" style="margin:6px 0 0">${note}</p>`:""}</div>`;}
+function renderDash(){const m=metrics();
+ $("kpis").innerHTML=[["Candidates tracked",m.cnt[0],"synthetic"],["Offers extended",m.offers,"all roles"],["Offer acceptance",m.oar+"%","hires ÷ offers"],["Median time to hire",m.med+" days","first contact → acceptance"],["Screen → panel",m.s2i+"%","conversion"]].map(k=>`<div class="kpi"><div class="k">${k[0]}</div><div class="v">${k[1]}</div><div class="d">${k[2]}</div></div>`).join("");
+ const srcRows=Object.entries(m.srcs).sort((a,b)=>b[1]-a[1]);
+ $("charts").innerHTML=bars("Pipeline funnel",m.st.map((s,i)=>[s,m.cnt[i]]),v=>v,"Each bar = candidates reaching the stage")+bars("Source of hire",srcRows,v=>v+" hire"+(v===1?"":"s"),"Hires by channel")+bars("Withdrawal rate by stage",m.drop,v=>v+"%","Highest bar = where to fix the process first");}
+async function runReport(){await withBusy("b-report",async()=>{const r=await callAI("report",PROMPTS.report.user(metricsText()));const m=metrics();
+ S.report=r||`Headline: ${m.hired} hires from ${m.offers} offers (${m.oar}% acceptance); median time to hire ${m.med} days. [Synthetic data]\n\nPipeline: ${m.cnt[0]} candidates tracked; ${m.cnt[3]} reached panel interviews. Screen-to-panel conversion is ${m.s2i}%.\n\nRisks: the highest withdrawal rate is at "${m.drop.slice().sort((a,b)=>b[1]-a[1])[0][0]}" (${m.drop.slice().sort((a,b)=>b[1]-a[1])[0][1]}%) — review timing and candidate communication at that stage.\n\nDecisions needed: (1) confirm whether to shorten the work sample; (2) agree priority roles for next week's sourcing push.`;
+ log("ai",`Weekly update drafted (${MODE})`);srcBadge("src-report");$("out-report").innerHTML=`<textarea style="min-height:170px">${esc(S.report)}</textarea>`+checkpoint("report","the recruiter checks every number against the dashboard before sending.");});}
+
+/* AUDIT */
+function renderLog(){const el=$("log");if(!el)return;el.innerHTML=LOG.length?LOG.map(l=>`<div><span class="t">${l.time.replace("T"," ").slice(0,19)}</span> <span class="${l.kind==="ai"?"a":l.kind==="human"?"h":""}">[${l.kind.toUpperCase()}]</span> ${esc(l.msg)}</div>`).join(""):'<div>No events yet.</div>';}
+function showPrompt(){const s=$("psel");if(!s.options.length)s.innerHTML=Object.entries(PROMPTS).map(([k,v])=>`<option value="${k}">${esc(v.name)}</option>`).join("");$("ptext").textContent=promptText(s.value);}
+function exportLog(){const b=new Blob([JSON.stringify(LOG,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="copilot-audit-log.json";a.click();}
+
+/* init */
+$("jd").value=SAMPLE_JD;renderCands();showCV();log("system","Prototype loaded in SAMPLE mode with synthetic data");
+</script>
+</body>
+</html>
